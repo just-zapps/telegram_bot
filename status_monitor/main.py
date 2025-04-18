@@ -46,9 +46,16 @@ def build_boot_msg(date_time, ip):
     return boot_msg
 
 
-def get_ip():
-    ip = get('https://api.ipify.org').content.decode('utf8')
-    return ip
+def get_ip(retries=5, delay=5):
+    for attempt in range(retries):
+        try:
+            ip = get('https://api.ipify.org').content.decode('utf8')
+            return ip
+        except Exception as e:
+            print(f"Failed to get IP (attempt {attempt + 1}/{retries}): {e}")
+            time.sleep(delay)
+    
+    return "Unavailable"
 
 
 def get_date_time():
